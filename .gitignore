@@ -2,3 +2,4 @@ drift/static/components/
 *.py[cod]
 dev.sqlite
 venv/
+*.conf
