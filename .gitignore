@@ -1,2 +1,4 @@
-drfitbottles/static/components/
+drift/static/components/
 *.py[cod]
+dev.sqlite
+venv/
