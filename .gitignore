@@ -3,3 +3,4 @@ drift/static/components/
 dev.sqlite
 venv/
 *.conf
+.DS_Store
