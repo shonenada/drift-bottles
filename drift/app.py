@@ -1,13 +1,19 @@
 from flask import Flask
 
-from drfitbottles.bottles.view import bottle_app
+from drift.bottles.view import bottle_app
+from drift.extension import db
 
 
-def create_app():
-    app = Flask(__name__)
+def create_app(import_name=None, config=None):
+    app = Flask(import_name or __name__)
 
-    app.config['DEBUG'] = True
-    
+    app.config.from_object('drift.settings')
+
+    if config:
+        app.config.from_pyfile(config)
+
+    db.init_app(app)
+
     app.register_blueprint(bottle_app)
-    
+
     return app
