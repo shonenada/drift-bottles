@@ -1,0 +1,36 @@
+{%- extends 'global.html' %}
+
+{%- block scripts %}
+<link href="{{ url_for('static', filename='styles/global.css') }}" rel="stylesheet" type="text/css" />
+{%- endblock %}
+
+{%- block htmlhead %}
+{%- endblock %}
+{%- block header %}
+<div id="header">
+    <div id="header-container">
+        <a href="#"><img src="{{webroot}}static/images/top-logo.png" /></a>
+        <div id="header-nav">
+         <ul>
+            <li><a href="{{webroot}}books">读书分享</a></li>
+            <li><a href="{{webroot}}musics">音乐分享</a></li>
+            <li><a href="{{webroot}}videos">视频分享</a></li>
+            <li><a href="{{webroot}}bottles">漂流瓶</a></li>
+            <li><a href="{{webroot}}closestool">马桶</a></li>
+            <li><a href="{{webroot}}account">帐号</a></li>
+            <li><a href="{{webroot}}user/logout">退出</a></li>
+         </ul>
+        </div>
+    </div>
+</div>
+{%- endblock %}
+
+{%- block content %}
+
+{%- endblock %}
+
+{%- block footer %}
+<div id="footer">
+    版权所有&copy;深大匿友<br> <a href="{{webroot}}aboutus">关于我们</a> | <a href="{{webroot}}contactus">联系我们</a>
+</div>
+{%- endblock %}

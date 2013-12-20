@@ -1,1 +1,79 @@
-<a href="{{ url_for('bottles.show') }}">bottles</a>
+{%- extends 'global.html' %}
+
+{%- block htmlhead %}
+<script src="{{ url_for('static', filename='scripts/home.js') }}"></script>
+<link href="{{ url_for('static', filename='styles/form.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ url_for('static', filename='styles/layout.css') }}" rel="stylesheet" type="text/css" />
+{%- endblock %}
+
+{%- block content %}
+    <div id="content" >
+        <div id="container">
+            <div id="wrapper">
+                <div id="login" class="form animate">
+                    <form action="{{ url_for('account.signin') }}" id="login-form" method="post" autocomplete="on">
+                        {{ form.csrf_token }}
+                        <h1>漂 流 瓶<span>Drift Bottles</span></h1>
+                        <div>
+                            <label for="username" class="uname" >邮箱</label>
+                            <input type="text" name="username" id="username" required="required" placeholder="请输入注册邮箱： example@example.com"/>
+                        </div>
+                        <div>
+                            <label for="password" class="youpasswd" >密码</label>
+                            <input type="password" maxlength="20" name="password" required="required" placeholder="请输入密码" id="password" />
+                        </div>          
+                        <div class="keeplogin">
+                        <input type="hidden" name="loginkeeping" value="" />
+                            <input type="checkbox" checked="checked" name="loginkeeping" id="loginkeeping" />
+                            <label for="loginkeeping">记住登录</label>
+                        </div>      
+                        <div class="login button">
+                            <input type="submit" value="登录" class="btn" />
+                        </div> 
+                        <div class="change_link">
+                            快加入我们吧~ <a href="#"  class="to_register">注册！</a>
+                        </div>
+                    </form>
+                </div>
+                <!-- end Login Form -->
+                
+                <div id="register" class="form animate">
+                    <form action="{{ url_for('account.signup') }}" id="reg-form" method="post" autocomplete="on">
+                        {{ form.csrf_token }}
+                        <h1>漂 流 瓶<span>Drift Bottles</span></h1>
+                        <div>
+                            <label for="username" class="uname" >邮箱</label>
+                            <input type="text" name="username" placeholder="请输入邮箱，将作为登录帐号" required="required"  id="usernamesignup" />
+                        </div>      
+                        <div>
+                            <label for="password" class="youpasswd" >密码</label>
+                            <input type="password" name="password" maxlength="20" required="required" placeholder="请输入登录密码" id="passwordsignup" />
+                        </div>  
+                        <div>
+                            <label for="confirm" class="youpasswd">确认密码</label>
+                            <input type="password" name="confirm" maxlength="20" required="required" placeholder="请再次输入登录密码" id="passwordsignup_confirm" />
+                        </div>  
+                        <div>
+                            <label for="nickname">昵称</label>
+                            <input type="text" name="nickname" required="required" placeholder="请输入您昵称" id="nickname" />
+                        </div>  
+                        <div class="signin button">
+                            <input type="submit" value="注 册" />
+                        </div>      
+                        <div class="change_link">
+                            已经注册？ <a href="#" class="to_login">登录~</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div id="footer">
+<p>漂流瓶 - DriftBottle</p>
+<a href="{{ url_for('master.about') }}">关于我们</a> | <a href="{{ url_for('master.contact') }}">联系我们</a>
+</div>
+{%- endblock %}
+
+{%- block footer %}
+{%- endblock %}
