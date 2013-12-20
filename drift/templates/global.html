@@ -9,7 +9,7 @@
 <script src="{{ url_for('static', filename='scripts/cookies_for_ajax.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/setting.js') }}"></script>
 <link href="{{ url_for('static', filename='components/reset-css/index.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ url_for('static', filename='styles/messagebox.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ url_for('static', filename='styles/flash-messages.css') }}" rel="stylesheet" type="text/css" />
 {%- block scripts %}{%- endblock %}
 <!--[if !gt IE 8]>
 <script>
@@ -22,6 +22,7 @@ $S.alert('您的浏览器版本过低，不能获得良好的浏览效果，请�
 {% endblock %}
 </head>
 <body>
+{%- include 'flash-message.html' %}
 {%- block header %}
 {%- endblock %}
 

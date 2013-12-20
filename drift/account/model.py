@@ -24,8 +24,8 @@ users_roles = db.Table(
 
 class UserQuery(BaseQuery):
 
-    def authenticate(self, username, raw_passwd):
-        user = self.filter(User.username == username).first()
+    def authenticate(self, email, raw_passwd):
+        user = self.filter(User.email == email).first()
         if user and user.check_password(raw_passwd):
             return user
         return None
@@ -64,7 +64,6 @@ class User(db.Model, RBACUserMixinModel):
     USER_STATE = ('normal', 'unactivate', 'deleted')
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50))
     password = db.Column(db.String(32))
     email = db.Column(db.String(50))
     nickname = db.Column(db.String(20))
@@ -77,9 +76,10 @@ class User(db.Model, RBACUserMixinModel):
         backref=db.backref('user', uselist=False)
     )
 
-    def __init__(self, email, raw_pw, is_male=True):
+    def __init__(self, email, raw_pw, nickname, is_male=True):
         self.email = email
-        self.password = change_password(raw_pw)
+        self.change_password(raw_pw)
+        self.nickname = nickname
         self.is_male = is_male
         self.state = 'normal'
 
@@ -88,11 +88,11 @@ class User(db.Model, RBACUserMixinModel):
 
     def change_password(self, raw_passwd):
         self.salt = uuid4().hex
-        self.hashed_password = self._hash_password(self.salt, raw_passwd)
+        self.password = self._hash_password(self.salt, raw_passwd)
 
     def check_password(self, raw_passwd):
         _hashed_password = self._hash_password(self.salt, raw_passwd)
-        return (self.hashed_password == _hashed_password)
+        return (self.password == _hashed_password)
 
     def is_active(self):
         return (self.state == 'normal')

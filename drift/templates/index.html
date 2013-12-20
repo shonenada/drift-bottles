@@ -1,7 +1,6 @@
 {%- extends 'global.html' %}
 
 {%- block htmlhead %}
-<script src="{{ url_for('static', filename='scripts/home.js') }}"></script>
 <link href="{{ url_for('static', filename='styles/form.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url_for('static', filename='styles/layout.css') }}" rel="stylesheet" type="text/css" />
 {%- endblock %}
@@ -12,15 +11,15 @@
             <div id="wrapper">
                 <div id="login" class="form animate">
                     <form action="{{ url_for('account.signin') }}" id="login-form" method="post" autocomplete="on">
-                        {{ form.csrf_token }}
+                        {{ sign_in_form.csrf_token }}
                         <h1>漂 流 瓶<span>Drift Bottles</span></h1>
                         <div>
-                            <label for="username" class="uname" >邮箱</label>
-                            <input type="text" name="username" id="username" required="required" placeholder="请输入注册邮箱： example@example.com"/>
+                            {{ sign_in_form.email.label(for='email', class='uanem') }}
+                            {{ sign_in_form.email(required='required', placeholder='请输入注册邮箱： example@example.com') }}
                         </div>
                         <div>
-                            <label for="password" class="youpasswd" >密码</label>
-                            <input type="password" maxlength="20" name="password" required="required" placeholder="请输入密码" id="password" />
+                            {{ sign_in_form.password.label(for='password', class='youpasswd') }}
+                            {{ sign_in_form.password(required='required', placeholder='请输入密码', maxlength='20') }}
                         </div>          
                         <div class="keeplogin">
                         <input type="hidden" name="loginkeeping" value="" />
@@ -39,23 +38,23 @@
                 
                 <div id="register" class="form animate">
                     <form action="{{ url_for('account.signup') }}" id="reg-form" method="post" autocomplete="on">
-                        {{ form.csrf_token }}
+                        {{ sign_up_form.csrf_token }}
                         <h1>漂 流 瓶<span>Drift Bottles</span></h1>
                         <div>
-                            <label for="username" class="uname" >邮箱</label>
-                            <input type="text" name="username" placeholder="请输入邮箱，将作为登录帐号" required="required"  id="usernamesignup" />
+                            {{ sign_up_form.email.label(for='username', class='uname' )}}
+                            {{ sign_up_form.email(placeholder='请输入邮箱，将作为登录帐号', required='required')}}
                         </div>      
                         <div>
-                            <label for="password" class="youpasswd" >密码</label>
-                            <input type="password" name="password" maxlength="20" required="required" placeholder="请输入登录密码" id="passwordsignup" />
+                            {{ sign_up_form.password.label(for='password', class='youpasswd' )}}
+                            {{ sign_up_form.password(placeholder='请输入登录密码', required='required', maxlength='20')}}
                         </div>  
                         <div>
-                            <label for="confirm" class="youpasswd">确认密码</label>
-                            <input type="password" name="confirm" maxlength="20" required="required" placeholder="请再次输入登录密码" id="passwordsignup_confirm" />
+                            {{ sign_up_form.confirm.label(for='confirm', class='youpasswd') }}
+                            {{ sign_up_form.confirm(maxlength='20', required='required', placeholder='请再次输入登录密码') }}
                         </div>  
                         <div>
-                            <label for="nickname">昵称</label>
-                            <input type="text" name="nickname" required="required" placeholder="请输入您昵称" id="nickname" />
+                            {{ sign_up_form.nickname.label(for='nickname') }}
+                            {{ sign_up_form.nickname(required='required', placeholder='请输入您昵称') }}
                         </div>  
                         <div class="signin button">
                             <input type="submit" value="注 册" />
@@ -73,6 +72,62 @@
 <p>漂流瓶 - DriftBottle</p>
 <a href="{{ url_for('master.about') }}">关于我们</a> | <a href="{{ url_for('master.contact') }}">联系我们</a>
 </div>
+
+<script>
+
+$(function(){
+ /**
+  * @author Lyd.
+  */
+
+//Ajax for reg.
+    $('#reg-form').ajaxForm({
+        dataType:'json',
+        success: function(response){
+            if (response.success) {
+                document.location.href = "{{ url_for('master.index') }}"
+            }else{
+                window.flash_message(response.message, response.category);
+                window.flash_message(response.messages.join(', '), response.category);
+            }
+        },
+        error: function() {
+            window.flash_message('发生技术问题，导致你的报名失败。请联系管理员！', 'error');
+        }
+    });
+    
+//Ajax for login
+    $('#login-form').ajaxForm({
+        dataType:'json',
+        success: function(response){
+             if (response.success) {
+                document.location.href = "{{ url_for('bottle.show') }}"
+            }else{
+                window.flash_message(response.message, response.category);
+                window.flash_message(response.messages.join(', '), response.category);
+            }
+        },
+        error: function() {
+            window.flash_message('发生技术问题，导致你的报名失败。请联系管理员！', 'error');
+        }
+    });
+    
+//animate for change the forms  
+    $('#register').animate({opacity:'0',height:'-=40%',width:'-=40%',left:'+=20%',top:'+=20%'},1);
+    $('#register').hide();
+    $('.to_register').click(function(){
+        $('#login').animate({opacity:'0',width:'-=40%',left:'-=100%'},500);
+        $('#register').animate({opacity:'1',height:'+=40%',width:'+=40%',left:'-=20%',top:'-=20%'},500);
+    });
+    
+    $('.to_login').click(function(){
+        $('#register').animate({opacity:'0',height:'-=40%',width:'-=40%',left:'+=20%',top:'+=20%'},500);
+        $('#login').animate({opacity:'1',width:'+=40%',left:'+=100%'},500);
+    });
+
+    
+});
+</script>
 {%- endblock %}
 
 {%- block footer %}
