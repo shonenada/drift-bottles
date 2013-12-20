@@ -1,53 +1,12 @@
-@CHARSET "UTF-8";
-/** reset **/
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td { 
-	margin:0;
-	padding:0;
-}
-html,body {
-	margin:0;
-	padding:0;
-	
-}
-table {
-	border-collapse:collapse;
-	border-spacing:0;
-}
-fieldset,img { 
-	border:0;
-}
-address,caption,cite,code,dfn,th,var {
-	font-style:normal;
-	font-weight:normal;
-}
-ol,ul {
-	list-style:none;
-}
-caption,th {
-	text-align:left;
-}
-h1,h2,h3,h4,h5,h6 {
-	font-size:100%;
-	font-weight:normal;
-}
-q:before,q:after {
-	content:'';
-}
-abbr,acronym { border:0;
-}
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body{
-	font-family:"Microsoft Yahei", "微软雅黑", Tahoma, Arial, Helvetica, STHeiti;
+body {
+	font-family:"Microsoft Yahei", Tahoma, Arial, Helvetica, STHeiti;
 	background: #fff repeat top left;
 	font-weight: 400;
 	font-size: 15px;
 	color: #1d3c41;
 	overflow-y: scroll;
 }
-a{
+a {
 	color: #eee;
 	text-decoration: none;
 }
@@ -56,12 +15,12 @@ a:hover{
 }
 img {
 	border:0px;
-	}
+}
 
 
 /** global stlye **/
 body{
-	background:url(../../images/main-bg.png);
+	background: url('../images/main-bg.png');
 }
 #header {
 	background:#144465;
@@ -93,7 +52,7 @@ body{
 	width:100%;
 	height:24px;
 	text-align:center;
-	background:url(../../images/tips.png) no-repeat;
+	background:url('../images/tips.png') no-repeat;
 }
 #header-container li{
 	position:relative;
