@@ -1,0 +1,149 @@
+{%- extends 'base.html' %}
+
+{%- block htmlhead %}
+<script>
+$("#myBottles-box").empty();
+$.extend({pickBack:function (pickID){
+    if(pickID){
+        $.ajax({
+        url:'{{webroot}}bottles/my/pick/'+pickID,
+        type:'get',
+        async:true ,
+        dataType:'json',
+        success:function(response){
+            if(response.success){
+                $S.notice(response.message,2000);
+                $("#btn-t-"+pickID).show();
+                $("#btn-p-"+pickID).hide();
+            }else{
+                $S.error(response.message,2000);
+            }
+        },
+    });};
+    }})
+    
+    $.extend({thorwOut:function (pickID){
+    if(pickID){
+        $.ajax({
+        url:'{{webroot}}bottles/my/throw/'+pickID ,
+        type:'get',
+        async:true ,
+        dataType:'json',
+        success:function(response){
+            if(response.success){
+                $S.notice(response.message,2000);
+                $("#btn-t-"+pickID).hide();
+                $("#btn-p-"+pickID).show();
+            }else{
+                $S.error(response.message,2000);
+            }
+        },
+    });};
+    }})
+    
+    $.extend({del:function (pickID){
+    if(pickID){
+        $.ajax({
+        url:'{{webroot}}bottles/my/del/'+pickID ,
+        type:'get',
+        async:true ,
+        dataType:'json',
+        success:function(response){
+            if(response.success){
+                $S.notice(response.message,2000);
+                $("#myB-"+pickID).slideUp();
+                setTimeout(function(){$("#myB-"+pickID).remove()},3000);
+            }else{
+                $S.error(response.message,2000);
+            }
+        },
+    });};
+    }})
+
+
+$.extend ({myBottles:function(){
+        $.ajax({
+        url:'{{webroot}}bottles/my/page/'+1 ,
+        type:'get',
+        async:true ,
+        dataType:'json',
+        success:function(response){
+            var i = 0;
+            $("#myBottles-box").empty();
+            while(response[i].id){
+                if(response[i].visible == 0){
+                    vis = "不在漂流";
+                }else{
+                    vis = "还在漂流";
+                }
+                content = "<div class='myB' id='myB-"+response[i].id+"'><div class='myB-l'><img src='{{baseroot}}static/images/bottle/bottle.png' /><br /><a href='#' id='btn-t-"+response[i].id+"' onclick='$.thorwOut("+response[i].id+")'>#扔出去</a><a href='#' id='btn-p-"+response[i].id+"' onclick='$.pickBack("+response[i].id+")' >#捡回来</a><br /><a href='#' onclick='$.del("+response[i].id+")'>#不要了</a></div><div class='myB-r'><h5>投于"+response[i].sendTime+"("+vis+")：</h5><p>"+response[i].content+"</p></div></div>";
+                $("#myBottles-box").append(content);
+                if(response[i].visible == 0){
+                    $("#btn-p-"+response[i].id).hide();
+                }else{
+                    $("#btn-t-"+response[i].id).hide();
+                }
+                i++;
+            }
+        },
+        complete:function(){
+
+        }
+    });}
+});
+
+</script>
+<link href="{{ url_for('static', filename='styles/bottle/leadin.css') }}" rel="stylesheet" type="text/css" />
+<script src="{{ url_for('static', filename='scripts/bottle/leadin.js') }}"></script>
+{%- endblock %}
+
+{%- block content %}
+<div id="content">
+    <div id="top">
+        <div id="bottles-bg">
+        	<img src="{{ url_for('static', filename='images/bottle_s.jpg' )}}" />
+        </div>
+        <div id="bottle">
+            <div id="bottle-container">
+            <div id="infor">您还可以写x个字：</div>
+                <form name="paper-form" id="paper-form" action="{{ url_for('bottle.throw') }}" method="post">
+                    {{ throw_form.csrf_token }}
+                    {{ throw_form.paper }}
+                    <br />
+                    <input type="submit" class="btn disabled" disabled="disabled" value="  扔  " id="throwsubmit"/>
+                    &nbsp;&nbsp;&nbsp;
+                    <input type="button" class="btn error" value="关 闭" id="cancelbtn" />
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="throw-bottles">
+        <a href="#" id="throwBtn">扔?<br /><img src="{{ url_for('static', filename='images/arrow.png') }}" /></a>
+    </div>
+    <div id="pick-bottles">
+        <a href="{{ url_for('bottle.river') }}" id="pickBtn">捡?<br /><img src="{{ url_for('static', filename='images/arrow_f.png') }}" /></a>
+    </div>
+    <div id="my-bottles">
+        <a href="#" id="myBtn">我的瓶子<br /><img src="{{ url_for('static', filename='images/arrow_m.png') }}" /></a>
+    </div>
+    <div id="myBottles">
+        扔出的瓶子<span><input type="button" class="btn error" value="关 闭" id="myB-cbtn" /></span>
+        <div style="margin-top:8px;height:1px;background:#aaa;"></div>
+        <div id="myBottles-box">
+            <div class="myB">
+                <div class="myB-l">
+                <img src="{{ url_for('static', filename='images/bottle/bottle.png') }}" /><br /><br />
+                <a href="#" id="throw-my-bottle">#扔出去</a><br />
+                <a href="#" id="pick-my-bottle">#捡回来</a><br />
+                <a href="#" id="del-my-bottle">#不要了</a>
+                </div>
+                <div class="myB-r">
+                <h5>投于xxxx年xx月xx日（还在漂流）：</h5>
+                    <p>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%- endblock %}

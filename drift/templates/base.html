@@ -12,9 +12,9 @@
         <a href="#"><img src="{{webroot}}static/images/top-logo.png" /></a>
         <div id="header-nav">
          <ul>
-            <li><a href="{{webroot}}bottles">漂流瓶</a></li>
+            <li><a href="{{ url_for('bottle.leadin') }}">漂流瓶</a></li>
             <li><a href="{{webroot}}account">帐号</a></li>
-            <li><a href="{{webroot}}user/logout">退出</a></li>
+            <li><a href="{{ url_for('account.signout') }}">退出</a></li>
          </ul>
         </div>
     </div>
@@ -27,6 +27,6 @@
 
 {%- block footer %}
 <div id="footer">
-    版权所有&copy;深大匿友<br> <a href="{{webroot}}aboutus">关于我们</a> | <a href="{{webroot}}contactus">联系我们</a>
+    版权所有&copy;漂流瓶<br> <a href="{{ url_for('master.about') }}">关于我们</a> | <a href="{{ url_for('master.contact') }}">联系我们</a>
 </div>
 {%- endblock %}

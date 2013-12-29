@@ -1,18 +1,54 @@
-{% extends 'main.html' %}
+{% extends 'base.html' %}
 
 {% block htmlhead %}
 <link href="{{ url_for('static', filename='styles/bottles/bottles.css') }}" rel="stylesheet" type="text/css" />
 
 <script>
-$(document).ready(function(){
-    $.extend({initial:function(){$(".bottle").fadeOut(200);window.i=1;window.onFloat=0;setTimeout(function(){$(".bottle").remove();stm();},300);}});
-    $.extend({addPage:function(){window.page++;$.initial();}});
-    $.extend({dePage:function(){window.page--;$.initial();}})
-    $.extend({getRandom:function(x,y){return (parseInt(Math.random() * (y - x + 1) + x))}});
-    $.extend({setY:function(bottle){bottle.animate({top:$.getRandom(50,450) + "px"},1)}});
-    //$.extend({setX:function(bottle){bottle.animate({right:$.getRandom(-31,20) + "px"},1)}});
-    $.extend({setX:function(bottle){bottle.animate({right:$.getRandom(-40,-10) + "px"},1)}});
-    $.extend({init:function(bottle){$.setX(bottle);$.setY(bottle)}});
+$(document).ready(function() {
+    $.extend({
+        initial: function () {
+            $(".bottle").fadeOut(200);
+            window.i = 1;
+            window.onFloat = 0;
+            setTimeout(function() {
+                $(".bottle").remove();
+                stm();
+            },300);
+        }
+    });
+    $.extend({
+        addPage: function () {
+            window.page++;
+            $.initial();
+        }
+    });
+    $.extend({
+        dePage: function () {
+            window.page--;
+            $.initial();
+        }
+    })
+    $.extend({
+        getRandom: function (x, y) {
+            return (parseInt(Math.random() * (y - x + 1) + x));
+        }
+    });
+    $.extend({
+        setY: function (bottle) {
+            bottle.animate({top: $.getRandom(50, 450) + "px"}, 1)
+        }
+    });
+    $.extend({
+        setX: function (bottle) {
+            bottle.animate({right:$.getRandom(-40,-10) + "px"}, 1)
+        }
+    });
+    $.extend({
+        init: function (bottle) {
+            $.setX(bottle);
+            $.setY(bottle)
+        }
+    });
     $.extend({float:function(bottles){bottles.animate({top:'-=30px',right:"+=20px"},3000).delay(200).animate({top:'+=30px',right:"+=20px"},3000);}});
     $.extend({pickBack:function (pickID,pickNUM){
         if(pickID && pickNUM){
@@ -102,7 +138,7 @@ $(document).ready(function(){
 {% block content %}
     <div id="content">
         <div id="content-listPage">
-            {% if pages > 1 %}<a href="#" onclick="$.addPage()"><<往上岸走</a>  <span><a href="#" onclick="$.dePage()">往下岸走>></a></span> {% endif %}
+            {% if bottles.pages > 1 %}<a href="#" onclick="$.addPage()"> &lt; &lt; 往上岸走</a>  <span><a href="#" onclick="$.dePage()">往下岸走>></a></span> {% endif %}
         </div>
         <div id="ocean">
             <div id="bottles">

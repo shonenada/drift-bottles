@@ -100,11 +100,9 @@ $(function(){
     $('#login-form').ajaxForm({
         dataType:'json',
         success: function(response){
+            window.flash_response(response);
              if (response.success) {
-                document.location.href = "{{ url_for('bottle.show') }}"
-            }else{
-                window.flash_message(response.message, response.category);
-                window.flash_message(response.messages.join(', '), response.category);
+                document.location.href = "{{ url_for('bottle.leadin') }}"
             }
         },
         error: function() {
