@@ -21,7 +21,6 @@
         $(this).css({
           'margin-left': '-' + element_width / 2 + 'px'
         });
-        console.log('tse');
       });
     }
     fadeOutAll = function() {
@@ -41,6 +40,15 @@
       fadeOutAll();
       bindAction();
     };
+
+    window.flash_response = function(response) {
+      if (typeof response.message != 'undefined'){
+        window.flash_message(response.message, response.category);
+      }
+      if (typeof response.messages != 'undefined'){
+        window.flash_message(response.messages.join(','), response.category);
+      }
+    }
     bindAction();
     fadeOutAll();
   });
