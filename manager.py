@@ -20,10 +20,27 @@ def createdb(config="development.conf"):
     application.config.from_pyfile(config_file)
     with application.test_request_context():
         # import all Models here
-        from drift.bottles.model import Bottle
+        from drift.bottle.model import Bottle
         from drift.account.model import User, Role, roles_parents, users_roles
         db.create_all()
     print 'Created Database!'
+
+
+@manager.command
+def initdb(config="development.conf"):
+    config_file = os.path.join(app_root, config)
+    application.config.from_pyfile(config_file)
+    with application.test_request_context():
+        # Initial data for test
+        from fixture import init_db
+        init_db()
+    print "Initialized Database!"
+
+
+@manager.command
+def syncdb(config="development.conf"):
+    createdb(config)
+    initdb(config)
 
 
 if __name__ == '__main__':

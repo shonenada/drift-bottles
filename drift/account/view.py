@@ -3,17 +3,16 @@ from flask import Blueprint, render_template
 from flask import request, redirect, url_for, jsonify
 from flask.ext.login import login_user, logout_user, current_user
 
-from drift.app import db, rbac
+from drift.app import db
 from drift.utils import flash
 from drift.account.form import SignInForm, SignUpForm
-from drift.account.model import User
+from drift.account.model import User, Role
 
 
 account_app = Blueprint('account', __name__, template_folder='../templates')
 
 
 @account_app.route('/signin', methods=['POST'])
-@rbac.allow(['everyone'], ['POST'])
 def signin():
     if not current_user.is_anonymous():
         return jsonify(success=True)
@@ -34,7 +33,6 @@ def signin():
 
 
 @account_app.route('/signup', methods=['POST'])
-@rbac.allow(['everyone'], ['POST'])
 def signup():
     if not current_user.is_anonymous():
         return jsonify(success=True)
@@ -50,9 +48,11 @@ def signup():
             return jsonify(success=False, message=u'该昵称已被使用', category='warn')
         raw_passwd = form.data['password'].strip()
         user = User(email, raw_passwd, nickname)
+        local_user = Role.query.filter_by(name='local_user').first()
+        user.roles.append(local_user)
         db.session.add(user)
         db.session.commit()
-        flash(message=[u'注册成功'], category='notice')
+        flash(message=u'注册成功', category='notice')
         return jsonify(success=True)
     if form.errors:
         return jsonify(success=False, messages=form.errors.values(), category='warn')
@@ -60,4 +60,6 @@ def signup():
 
 @account_app.route('/signout')
 def signout():
-    pass
+    logout_user()
+    flash(u'退出成功', 'notice')
+    return redirect(url_for('master.index'))

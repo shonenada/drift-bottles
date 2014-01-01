@@ -6,7 +6,7 @@ from flask.ext.sqlalchemy import BaseQuery
 from flask_rbac import RBACRoleMixinModel, RBACUserMixinModel
 
 from drift.app import db
-from drift.bottles.model import Bottle
+from drift.bottle.model import Bottle
 
 
 roles_parents = db.Table(
@@ -99,6 +99,9 @@ class User(db.Model, RBACUserMixinModel):
 
     def is_anonymous(self):
         return (self.email is None)
+
+    def is_authenticated(self):
+        return (self.state == 'normal')
 
     @staticmethod
     def _hash_password(salt, password):
