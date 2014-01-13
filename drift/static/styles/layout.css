@@ -1,5 +1,4 @@
-@CHARSET "UTF-8";
-body{
+body {
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -8,7 +7,7 @@ body{
     background: url('../images/home-bg.jpg');
 }
     
-#footer{
+#footer {
     position: absolute;
     bottom: 0px;
     width: 100%;
