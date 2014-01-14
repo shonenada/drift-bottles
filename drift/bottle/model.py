@@ -1,9 +1,10 @@
 from datetime import datetime
 
 from drift.app import db
+from drift.master.model import SqlalchemyToJSONMixin
 
 
-class Bottle(db.Model):
+class Bottle(db.Model, SqlalchemyToJSONMixin):
 
     BOTTLE_STATE = ('normal', 'deleted')
 
