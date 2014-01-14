@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block htmlhead %}
-<link href="{{ url_for('static', filename='styles/bottles/bottles.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ url_for('static', filename='styles/bottle/bottles.css') }}" rel="stylesheet" type="text/css" />
 
 <script>
 $(document).ready(function () {
@@ -75,18 +75,20 @@ $(document).ready(function () {
     window.bottle_num = 1;
     window.float_count = 0;
 
-    var stm = function (bottle_num) {
+    var get_bottle = function (bottle_num) {
         if (typeof bottle_num == 'undefined')
             bottle_num = window.bottle_num;
         bottle_num = bottle_num - 1;
 
         $.ajax({
-            url: '{{ url_for("bottle.river") }}',
+            url: '{{ url_for("bottle.bottles") }}',
             data: {page: window.page},
             type: 'get',
             async: true,
             dataType: 'json',
             success: function (response) {
+                if (response[bottle_num] == null)
+                    return;
                 $("#bottle-" + bottle_num).fadeOut();
                 $("#bottle-" + bottle_num).remove();
                 
@@ -96,24 +98,24 @@ $(document).ready(function () {
 
                 bottle.prepend(bottle_container);
                 bottle_container.prepend(bottle_content);
-                bottle_content.append(response[bottle_num]).content;
+                bottle_content.append(response[bottle_num].content);
 
-                if(response[bottle_num].me == 1){
-                    var pick_back = $('<input type="button" value="捞回我的漂流瓶" class="btn error" />').click(function (){
-                        $.pick_back(response[bottle_num].id, bottle_num);
-                    });
-                    bottle_container.append(pick_back);
-                }
+                // if(response[bottle_num].me == 1){
+                //     var pick_back = $('<input type="button" value="捞回我的漂流瓶" class="btn error" />').click(function (){
+                //         $.pick_back(response[bottle_num].id, bottle_num);
+                //     });
+                //     bottle_container.append(pick_back);
+                // }
 
                 bottle_container.append($('<input class="btn success" value="回漂瓶子" type="button" id="btn-' + bottle_num +'" />'));
 
-                bottle.append($('<div id="bottle-bottle-' + bottle_num + '" num="' + bottle_num + '" class="bottle-bottle"></div>').append('<img src="{{ url_for("static", filename="images/" + random(0, 9) + ".png" ) }}" />'));
+                bottle.append($('<div id="bottle-bottle-' + bottle_num + '" num="' + bottle_num + '" class="bottle-bottle"></div>').append('<img src="{{ url_for("static", filename="images/bottle/" + random(0, 9) + ".png" ) }}" />'));
 
                 $("#bottles").append(bottle);
 
                 window.float_count++;
             },
-            complete:function(){
+            complete: function(){
                 $("#bottle-container-" + bottle_num).hide();
                 $("#bottle-bottle-" + bottle_num).click(function () {
                     $(".bottle-container").fadeOut();
@@ -128,26 +130,26 @@ $(document).ready(function () {
                 $("#bottle-bottle-" + bottle_num).each(function () {$.init($(this));});
                 $("#bottle-bottle-" + bottle_num).animate({top:"+=15px",right:"+=10px"},1500);
                 $.float($("#bottle-bottle-" + bottle_num));
-                setInterval("$.float($('#bottle-bottle-" + l +"'))",5300);
+                setInterval("$.float($('#bottle-bottle-" + bottle_num +"'))",5300);
                 window.bottle_num++;
             }
         });
     }
 
-    var chk = function (){
-        for(j=1;j<window.bottle_num;j++){
+    var check_bottle = function (){
+        for(j=0;j<window.bottle_num-1;j++){
             if( $("#bottle-bottle-"+ j).position().left <= -10){
                 $("#bottle-" + j).fadeOut();
                 $("#bottle-" + j).remove();
-                stm(j);
+                get_bottle(j);
                 window.float_count--;
             }
         }
     }
 
-    setTimeout(stm,0);
-    setInterval(stm,5500);
-    setInterval(chk,5500);
+    setTimeout(get_bottle, 0);
+    setInterval(get_bottle, 5500);
+    setInterval(check_bottle, 5500);
 
 });
 
