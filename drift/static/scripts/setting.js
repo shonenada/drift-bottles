@@ -1,20 +1,20 @@
-(function() {
+(function () {
 
-  $(function() {
+  $(function () {
     var fadeOut, fade_out;
-    fade_out = function(_element) {
+    fade_out = function (_element) {
       _element.children('div').removeClass('bind-animate');
       _element.children('div').slideUp();
       _element.children('div').addClass('fade-out');
-      setTimeout(function() {
+      setTimeout(function () {
         _element.remove();
       }, 500);
     };
-    bindAction = function() {
-      $("#flash-messages-container > a").click(function() {
+    bindAction = function () {
+      $("#flash-messages-container > a").click(function () {
         fade_out($(this));
       });
-      $(".message-box-fixed").children("a").children("div").each(function() {
+      $(".message-box-fixed").children("a").children("div").each(function () {
         var element_padding, element_width;
         element_padding = $(this).css('padding').split(' ')[1].replace('px', '');
         element_width = $(this).width() + element_padding * 2;
@@ -23,12 +23,14 @@
         });
       });
     }
-    fadeOutAll = function() {
-      setTimeout(function() {
+    fadeOutAll = function (delay) {
+      if (typeof delay == 'undefined')
+        delay = 2500;
+      setTimeout(function () {
         fade_out($("#flash-messages-container > a"));
-      }, 2500);
+      }, delay);
     };
-    window.flash_message = function(message, category) {
+    window.flash_message = function (message, category, delay) {
       var a_html, clear_html;
       if (typeof category === 'undefined') {
         category = 'notice';
@@ -37,11 +39,11 @@
       clear_html = $('<div style="clear:both;"></div>');
       $("#flash-messages-container").append(a_html);
       $("#flash-messages-container").append(clear_html);
-      fadeOutAll();
+      fadeOutAll(delay);
       bindAction();
     };
 
-    window.flash_response = function(response) {
+    window.flash_response = function (response) {
       if (typeof response.message != 'undefined'){
         window.flash_message(response.message, response.category);
       }
