@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block htmlhead %}
+<link href="{{ url_for('static', filename='styles/bottles/bottles.css') }}" rel="stylesheet" type="text/css" />
+
+<script>
+$(document).ready(function () {
+
+    $.extend({
+        // 
+        initial: function () {
+            $(".bottle").fadeOut(200);
+            window.bottle_num = 1;
+            window.float_count = 0;
+            setTimeout(function() {
+                $(".bottle").remove();
+                stm();
+            },300);
+        },
+        page_increase: function () {
+            window.page++;
+            $.initial();
+        },
+        page_decrease: function () {
+            window.page--;
+            $.initial();
+        },
+        getRandom: function (lower, upper) {
+            return (parseInt(Math.random() * (upper - lower + 1) + lower));
+        },
+        setY: function (bottle) {
+            bottle.animate({top: $.getRandom(50, 450) + "px"}, 1)
+        },
+        setX: function (bottle) {
+            bottle.animate({right:$.getRandom(-40,-10) + "px"}, 1)
+        },
+        init: function (bottle) {
+            $.setX(bottle);
+            $.setY(bottle)
+        },
+        float: function (bottles) {
+            bottles.animate ({
+                top: '-=30px',
+                right: "+=20px"
+            }, 3000).delay(200).animate({
+                top: '+=30px',
+                right: "+=20px"
+            }, 3000);
+        },
+        pick_back: function (pickID, pickNUM) {
+            if(pickID && pickNUM){
+                $.ajax({
+                    url: '{{ url_for("bottle.pick") }}',
+                    data: {'bottle_id': pickID},
+                    type: 'post',
+                    async: true ,
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            window.flash_message(response.message, 'notice', 2000);
+                        }else{
+                            window.flash_message(response.message, 'error', 2000);
+                        }
+                    },
+                    complete: function () {
+                        $("#bottle-" + pickNUM).fadeOut();
+                        setTimeout(function(){$("#bottle-" + pickNUM).remove();}, 4000);
+                    }
+                });
+            };
+        },
+    });
+
+    window.page = 1;
+    window.bottle_num = 1;
+    window.float_count = 0;
+
+    var stm = function (bottle_num) {
+        if (typeof bottle_num == 'undefined')
+            bottle_num = window.bottle_num;
+        bottle_num = bottle_num - 1;
+
+        $.ajax({
+            url: '{{ url_for("bottle.river") }}',
+            data: {page: window.page},
+            type: 'get',
+            async: true,
+            dataType: 'json',
+            success: function (response) {
+                $("#bottle-" + bottle_num).fadeOut();
+                $("#bottle-" + bottle_num).remove();
+                
+                var bottle = $('<div id="bottle-"' + bottle_num + '" class="bottle"></div>');
+                var bottle_container = $('<div id="bottle-container-' + bottle_num +'" class="bottle-container"></div>');
+                var bottle_content = $('<div id="bottle-content-' + bottle_num + '" class="bottle-content"></div>');
+
+                bottle.prepend(bottle_container);
+                bottle_container.prepend(bottle_content);
+                bottle_content.append(response[bottle_num]).content;
+
+                if(response[bottle_num].me == 1){
+                    var pick_back = $('<input type="button" value="捞回我的漂流瓶" class="btn error" />').click(function (){
+                        $.pick_back(response[bottle_num].id, bottle_num);
+                    });
+                    bottle_container.append(pick_back);
+                }
+
+                bottle_container.append($('<input class="btn success" value="回漂瓶子" type="button" id="btn-' + bottle_num +'" />'));
+
+                bottle.append($('<div id="bottle-bottle-' + bottle_num + '" num="' + bottle_num + '" class="bottle-bottle"></div>').append('<img src="{{ url_for("static", filename="images/" + random(0, 9) + ".png" ) }}" />'));
+
+                $("#bottles").append(bottle);
+
+                window.float_count++;
+            },
+            complete:function(){
+                $("#bottle-container-" + bottle_num).hide();
+                $("#bottle-bottle-" + bottle_num).click(function () {
+                    $(".bottle-container").fadeOut();
+                    $(".bottle-bottle").find("img").animate({width: "66px", height: "66px"}, 200);
+                    $(this).find('img').animate({width: "+=10px", height: "+=10px"});
+                    $("#bottle-container-" + $(this).attr('num')).fadeIn('slow');
+                });
+                $("#btn-" + bottle_num).click(function () {
+                    $(".bottle-bottle").find("img").animate({width: "66px", height: "66px"});
+                    $(".bottle-container").fadeOut();
+                });
+                $("#bottle-bottle-" + bottle_num).each(function () {$.init($(this));});
+                $("#bottle-bottle-" + bottle_num).animate({top:"+=15px",right:"+=10px"},1500);
+                $.float($("#bottle-bottle-" + bottle_num));
+                setInterval("$.float($('#bottle-bottle-" + l +"'))",5300);
+                window.bottle_num++;
+            }
+        });
+    }
+
+    var chk = function (){
+        for(j=1;j<window.bottle_num;j++){
+            if( $("#bottle-bottle-"+ j).position().left <= -10){
+                $("#bottle-" + j).fadeOut();
+                $("#bottle-" + j).remove();
+                stm(j);
+                window.float_count--;
+            }
+        }
+    }
+
+    setTimeout(stm,0);
+    setInterval(stm,5500);
+    setInterval(chk,5500);
+
+});
+
+</script>
+{% endblock %}
+
+{% block content %}
+    <div id="content">
+        <div id="content-listPage">
+            {% if bottles.pages > 1 %}<a href="#" onclick="$.page_increase()"> &lt; &lt; 往上岸走</a>  <span><a href="#" onclick="$.page_decrease()">往下岸走>></a></span> {% endif %}
+        </div>
+        <div id="ocean">
+            <div id="bottles">
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
