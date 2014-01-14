@@ -26,7 +26,7 @@ def river():
         page = page,
         per_page = 20
     )
-    return render_template('bottles.html', bottles=bottles)
+    return render_template('bottle/bottles.html', bottles=bottles)
 
 
 @bottle_app.route('/throw', methods=['POST'])
@@ -41,3 +41,8 @@ def throw():
         return jsonify(success=True, message=u'成功扔出一支瓶子', categore='notice')
     if form.errors:
         return jsonify(success=False, messages=form.errors.values())
+
+@bottle_app.route('/pick', methods=['POST'])
+@login_required
+def pick():
+    return None
