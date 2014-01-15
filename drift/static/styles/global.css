@@ -80,6 +80,8 @@ img {
   bottom: 5px;
   font-size: 12px;
   position: fixed;
+  line-height: 1.8em;
+  text-align: center;
 }
 
 #footer a {
