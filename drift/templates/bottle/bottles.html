@@ -42,7 +42,7 @@ $(document).ready(function () {
     }
 
     Drift.setX = function (bottle) {
-        bottle.animate({right: Drift.random_num(-40, -10) + "px"}, 1)
+        bottle.animate({right: Drift.random_num(-70, -100) + "px"}, 1)
     }
 
     Drift.init_position = function (bottle) {
@@ -164,8 +164,6 @@ $(document).ready(function () {
         }
     }
 
-    // setTimeout(Drift.get_bottle, 0);
-    // setInterval(Drift.get_bottle, 5500);
     setInterval(Drift.check_bottle, 5500);
 
     window.Drift = window.$D = Drift;
