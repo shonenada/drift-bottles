@@ -37,7 +37,7 @@ def bottles():
         page = page,
         per_page = 20
     ).items
-    return json.dumps([bottle.serialization for bottle in bottles])
+    return jsonify(bottles=[bottle.serialization for bottle in bottles])
 
 
 @bottle_app.route('/throw', methods=['POST'])

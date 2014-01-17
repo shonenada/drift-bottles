@@ -8,14 +8,15 @@ $(document).ready(function () {
 
     var Drift = {
         page: 1,
-        bottle_num: 1,
-        float_count: 0,
+        config: {},
+        river: {
+            'bottles': {},
+            'current_num': 0
+        },
     };
 
     Drift.initial = function () {
         $(".bottle").fadeOut(200);
-        Drift.bottle_num = 1;
-        Drift.float_count = 0;
         setTimeout(function () {
             $(".bottle").remove();
             get_bottle();
@@ -59,6 +60,12 @@ $(document).ready(function () {
         }, 3000);
     }
 
+    Drift.repeat = function (func, delay, times) {
+        while (times){
+           setTimeout(func, delay * --times);
+        }
+    }
+
     Drift.pick_back = function (pickID, pickNUM) {
         if(pickID && pickNUM){
             $.ajax({
@@ -84,88 +91,86 @@ $(document).ready(function () {
         };
     }
 
-    Drift.get_bottle = function (bottle_num) {
-        if (typeof bottle_num == 'undefined')
-            bottle_num = Drift.bottle_num;
-        bottle_num = bottle_num - 1;
-
+    Drift.get_bottles = function () {
         $.ajax({
             url: '{{ url_for("bottle.bottles") }}',
-            data: {page: Drift.page},
-            type: 'get',
+            data: {
+                page: Drift.page
+            },
+            type: 'GET',
             async: true,
             dataType: 'json',
             success: function (response) {
-                if (response[bottle_num] == null)
-                    return;
-                $("#bottle-" + bottle_num).fadeOut();
-                $("#bottle-" + bottle_num).remove();
-                
-                var bottle = $('<div id="bottle-"' + bottle_num + '" class="bottle"></div>');
-                var bottle_container = $('<div id="bottle-container-' + bottle_num +'" class="bottle-container"></div>');
-                var bottle_content = $('<div id="bottle-content-' + bottle_num + '" class="bottle-content"></div>');
-
-                bottle.prepend(bottle_container);
-                bottle_container.prepend(bottle_content);
-                bottle_content.append(response[bottle_num].content);
-
-                // if(response[bottle_num].me == 1){
-                //     var pick_back = $('<input type="button" value="捞回我的漂流瓶" class="btn error" />').click(function (){
-                //         $.pick_back(response[bottle_num].id, bottle_num);
-                //     });
-                //     bottle_container.append(pick_back);
-                // }
-
-                bottle_container.append($('<input class="btn success" value="回漂瓶子" type="button" id="btn-' + bottle_num +'" />'));
-
-                bottle.append($('<div id="bottle-bottle-' + bottle_num + '" num="' + bottle_num + '" class="bottle-bottle"></div>').append($('<img id="bottle-img-' + bottle_num + '" />').attr("src", '{{url_for("static", filename="images/bottle/")}}' + Drift.random_num(0, 9) + '.png')));
-
-                $("#bottles").append(bottle);
-
-                Drift.float_count++;
-            },
-            complete: function (){
-                $("#bottle-container-" + bottle_num).hide();
-                $("#bottle-bottle-" + bottle_num).click(function () {
-                    $(".bottle-container").fadeOut();
-                    $(".bottle-bottle").find("img").animate({width: "66px", height: "66px"}, 200);
-                    $(this).find('img').animate({width: "+=10px", height: "+=10px"});
-                    $("#bottle-container-" + $(this).attr('num')).fadeIn('slow');
-                });
-                $("#btn-" + bottle_num).click(function () {
-                    $(".bottle-bottle").find("img").animate({width: "66px", height: "66px"});
-                    $(".bottle-container").fadeOut();
-                });
-                $("#bottle-bottle-" + bottle_num).each(
-                    function () {
-                        Drift.init_position($(this));
-                    }
-                );
-                $("#bottle-bottle-" + bottle_num).animate({top:"+=15px",right:"+=10px"}, 1500);
-                Drift.float_once($("#bottle-bottle-" + bottle_num));
-                setInterval("$D.float_once($('#bottle-bottle-" + bottle_num +"'))", 5300);
-                Drift.bottle_num++;
+                Drift.river.bottles = response.bottles;
+                Drift.repeat(function () {
+                    Drift.float_bottle();
+                }, 5500, response.bottles.length);
             }
-        });
+        })
+    }
+
+    Drift.float_bottle = function (bottle_seq) {
+        if (typeof bottle_seq == 'undefined') {
+            bottle_seq = Drift.river.current_num++;
+        }
+
+        $("#bottle-" + bottle_seq).fadeOut();
+        $("#bottle-" + bottle_seq).remove();
+        
+        var bottle = $('<div id="bottle-"' + bottle_seq + '" class="bottle"></div>');
+        var bottle_container = $('<div id="bottle-container-' + bottle_seq +'" class="bottle-container"></div>');
+        var bottle_content = $('<div id="bottle-content-' + bottle_seq + '" class="bottle-content"></div>');
+
+        bottle.prepend(bottle_container);
+        bottle_container.prepend(bottle_content);
+        bottle_content.append(Drift.river.bottles[bottle_seq].content);
+
+        // if(response[bottle_seq].me == 1){
+        //     var pick_back = $('<input type="button" value="捞回我的漂流瓶" class="btn error" />').click(function (){
+        //         $.pick_back(response[bottle_seq].id, bottle_seq);
+        //     });
+        //     bottle_container.append(pick_back);
+        // }
+
+        bottle_container.append($('<input class="btn success" value="回漂瓶子" type="button" id="btn-' + bottle_seq +'" />').click(function () {
+            $(".bottle-bottle").find("img").animate({width: "66px", height: "66px"});
+            $(".bottle-container").fadeOut();
+        }));
+
+        bottle.append($('<div id="bottle-bottle-' + bottle_seq + '" num="' + bottle_seq + '" class="bottle-bottle"></div>').click(function () {
+            $(".bottle-container").fadeOut();
+            $(".bottle-bottle").find("img").animate({width: "66px", height: "66px"}, 200);
+            $(this).find('img').animate({width: "+=10px", height: "+=10px"});
+            $("#bottle-container-" + $(this).attr('num')).fadeIn('slow');
+        }).append($('<img id="bottle-img-' + bottle_seq + '" />').attr("src", '{{url_for("static", filename="images/bottle/")}}' + Drift.random_num(0, 9) + '.png')));
+
+        $("#bottles").append(bottle);
+
+        Drift.init_position($("#bottle-bottle-" + bottle_seq));
+        $("#bottle-container-" + bottle_seq).hide();
+
+        $("#bottle-bottle-" + bottle_seq).animate({top:"+=15px",right:"+=10px"}, 1500);
+        Drift.float_once($("#bottle-bottle-" + bottle_seq));
+        setInterval("$D.float_once($('#bottle-bottle-" + bottle_seq +"'))", 5300);
     }
 
     Drift.check_bottle = function (){
-        for(j=0;j<Drift.bottle_num-1;j++){
+        for(j=0;j<Drift.river.current_num;j++){
             if($("#bottle-bottle-"+ j).position().left <= -10){
                 $("#bottle-" + j).fadeOut();
                 $("#bottle-" + j).remove();
-                Drift.get_bottle(j);
-                Drift.float_count--;
+                Drift.float_bottle(j);
             }
         }
     }
 
-    setTimeout(Drift.get_bottle, 0);
+    // setTimeout(Drift.get_bottle, 0);
     // setInterval(Drift.get_bottle, 5500);
     setInterval(Drift.check_bottle, 5500);
 
     window.Drift = window.$D = Drift;
 
+    $D.get_bottles();
 });
 
 </script>
