@@ -8,7 +8,15 @@ $(document).ready(function () {
 
     var Drift = {
         page: 1,
-        config: {},
+        config: {
+            'Y_lower': '50',
+            'Y_upper': '450',
+            'X_lower': '-70',
+            'X_upper': '-100',
+            'float_one_time': 3000,
+            'float_one_delay': 200,
+            'call_float_during': 5500,
+        },
         river: {
             'bottles': {},
             'current_num': 0
@@ -38,11 +46,11 @@ $(document).ready(function () {
     }
 
     Drift.setY = function (bottle) {
-        bottle.animate({top: Drift.random_num(50, 450) + "px"}, 1)
+        bottle.animate({top: Drift.random_num(Drift.config['Y_lower'], Drift.config['Y_upper']) + "px"}, 1)
     }
 
     Drift.setX = function (bottle) {
-        bottle.animate({right: Drift.random_num(-70, -100) + "px"}, 1)
+        bottle.animate({right: Drift.random_num(Drift.config['X_lower'], Drift.config['X_upper']) + "px"}, 1)
     }
 
     Drift.init_position = function (bottle) {
@@ -54,10 +62,10 @@ $(document).ready(function () {
         bottles.animate({
             top: '-=30px',
             right: "+=20px"
-        }, 3000).delay(200).animate({
+        }, Drift.config['float_one_time']).delay(Drift.config['float_one_delay']).animate({
             top: '+=30px',
             right: "+=20px"
-        }, 3000);
+        }, Drift.config['float_one_time']);
     }
 
     Drift.repeat = function (func, delay, times) {
@@ -149,9 +157,9 @@ $(document).ready(function () {
         Drift.init_position($("#bottle-bottle-" + bottle_seq));
         $("#bottle-container-" + bottle_seq).hide();
 
-        $("#bottle-bottle-" + bottle_seq).animate({top:"+=15px",right:"+=10px"}, 1500);
+        $("#bottle-bottle-" + bottle_seq).animate({top:"+=15px", right:"+=10px"}, 1500);
         Drift.float_once($("#bottle-bottle-" + bottle_seq));
-        setInterval("$D.float_once($('#bottle-bottle-" + bottle_seq +"'))", 5300);
+        setInterval("$D.float_once($('#bottle-bottle-" + bottle_seq +"'))", Drift.config['call_float_during']);
     }
 
     Drift.check_bottle = function (){
@@ -164,7 +172,7 @@ $(document).ready(function () {
         }
     }
 
-    setInterval(Drift.check_bottle, 5500);
+    setInterval(Drift.check_bottle, Drift.config['call_float_during']);
 
     window.Drift = window.$D = Drift;
 
