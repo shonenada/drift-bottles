@@ -9,10 +9,10 @@ $(document).ready(function () {
     var Drift = {
         page: 1,
         config: {
-            'Y_lower': '50',
-            'Y_upper': '450',
-            'X_lower': '-70',
-            'X_upper': '-100',
+            'Y_lower': 100,
+            'Y_upper': 450,
+            'X_lower': -30,
+            'X_upper': -70,
             'float_one_time': 3000,
             'float_one_delay': 200,
             'call_float_during': 5500,
@@ -42,20 +42,20 @@ $(document).ready(function () {
     }
 
     Drift.random_num = function (lower, upper) {
-        return (parseInt(Math.random() * (upper - lower + 1) + lower));
+        return (parseInt(Math.random() * (upper - lower) + lower));
     }
 
     Drift.setY = function (bottle) {
-        bottle.animate({top: Drift.random_num(Drift.config['Y_lower'], Drift.config['Y_upper']) + "px"}, 1)
+        bottle.animate({top: Drift.random_num(Drift.config['Y_lower'], Drift.config['Y_upper']) + "px"}, 1);
     }
 
     Drift.setX = function (bottle) {
-        bottle.animate({right: Drift.random_num(Drift.config['X_lower'], Drift.config['X_upper']) + "px"}, 1)
+        bottle.animate({right: Drift.random_num(Drift.config['X_lower'], Drift.config['X_upper']) + "px"}, 1);
     }
 
     Drift.init_position = function (bottle) {
         Drift.setX(bottle);
-        Drift.setY(bottle)
+        Drift.setY(bottle);
     }
 
     Drift.float_once = function (bottles) {
@@ -74,11 +74,11 @@ $(document).ready(function () {
         }
     }
 
-    Drift.pick_back = function (pickID, pickNUM) {
-        if(pickID && pickNUM){
+    Drift.pick_back = function (pick_id, pick_num) {
+        if(pick_id && pick_num){
             $.ajax({
                 url: '{{ url_for("bottle.pick") }}',
-                data: {'bottle_id': pickID},
+                data: {'bottle_id': pick_id},
                 type: 'post',
                 async: true ,
                 dataType: 'json',
@@ -90,9 +90,9 @@ $(document).ready(function () {
                     }
                 },
                 complete: function () {
-                    $("#bottle-" + pickNUM).fadeOut();
+                    $("#bottle-" + pick_num).fadeOut();
                     setTimeout(function () {
-                        $("#bottle-" + pickNUM).remove();
+                        $("#bottle-" + pick_num).remove();
                     }, 4000);
                 }
             });
