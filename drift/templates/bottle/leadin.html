@@ -2,95 +2,104 @@
 
 {%- block htmlhead %}
 <script>
-$("#myBottles-box").empty();
-$.extend({pickBack:function (pickID){
-    if(pickID){
-        $.ajax({
-        url:'{{webroot}}bottles/my/pick/'+pickID,
-        type:'get',
-        async:true ,
-        dataType:'json',
-        success:function(response){
-            if(response.success){
-                $S.notice(response.message,2000);
-                $("#btn-t-"+pickID).show();
-                $("#btn-p-"+pickID).hide();
-            }else{
-                $S.error(response.message,2000);
-            }
-        },
-    });};
-    }})
-    
-    $.extend({thorwOut:function (pickID){
-    if(pickID){
-        $.ajax({
-        url:'{{webroot}}bottles/my/throw/'+pickID ,
-        type:'get',
-        async:true ,
-        dataType:'json',
-        success:function(response){
-            if(response.success){
-                $S.notice(response.message,2000);
-                $("#btn-t-"+pickID).hide();
-                $("#btn-p-"+pickID).show();
-            }else{
-                $S.error(response.message,2000);
-            }
-        },
-    });};
-    }})
-    
-    $.extend({del:function (pickID){
-    if(pickID){
-        $.ajax({
-        url:'{{webroot}}bottles/my/del/'+pickID ,
-        type:'get',
-        async:true ,
-        dataType:'json',
-        success:function(response){
-            if(response.success){
-                $S.notice(response.message,2000);
-                $("#myB-"+pickID).slideUp();
-                setTimeout(function(){$("#myB-"+pickID).remove()},3000);
-            }else{
-                $S.error(response.message,2000);
-            }
-        },
-    });};
-    }})
+    var Drift = {
 
+    };
 
-$.extend ({myBottles:function(){
-        $.ajax({
-        url:'{{webroot}}bottles/my/page/'+1 ,
-        type:'get',
-        async:true ,
-        dataType:'json',
-        success:function(response){
-            var i = 0;
-            $("#myBottles-box").empty();
-            while(response[i].id){
-                if(response[i].visible == 0){
-                    vis = "不在漂流";
-                }else{
-                    vis = "还在漂流";
+    Drift.init = function () {
+        $('#myBottles-box').empty();
+    }
+
+    Drift.pick_back = function (pick_id) {
+        if (pick_id) {
+            $.ajax({
+                url: '{{ url_for("bottle.pick") }}'
+                data: {'bottle_id': pick_id},
+                type: 'GET',
+                async: true,
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success){
+                        window.flash_message(response.message, 'notice', 2000);
+                        $("#btn-t-"+pick_id).hide();
+                        $("#btn-p-"+pick_id).show();
+                    }else{
+                        window.flash_message(response.message, 'error', 2000);
+                    }
                 }
-                content = "<div class='myB' id='myB-"+response[i].id+"'><div class='myB-l'><img src='{{baseroot}}static/images/bottle/bottle.png' /><br /><a href='#' id='btn-t-"+response[i].id+"' onclick='$.thorwOut("+response[i].id+")'>#扔出去</a><a href='#' id='btn-p-"+response[i].id+"' onclick='$.pickBack("+response[i].id+")' >#捡回来</a><br /><a href='#' onclick='$.del("+response[i].id+")'>#不要了</a></div><div class='myB-r'><h5>投于"+response[i].sendTime+"("+vis+")：</h5><p>"+response[i].content+"</p></div></div>";
-                $("#myBottles-box").append(content);
-                if(response[i].visible == 0){
-                    $("#btn-p-"+response[i].id).hide();
-                }else{
-                    $("#btn-t-"+response[i].id).hide();
-                }
-                i++;
-            }
-        },
-        complete:function(){
-
+            })
         }
-    });}
-});
+    }
+
+    Drift.throw = function (pick_id) {
+        if (pick_id) {
+            $.ajax({
+                url: '{{ url_for("bottle.throw_out") }}',
+                data: {bottle_id: pick_id},
+                type: 'PUT',
+                async: true,
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success){
+                        window.flash_message(response.message, 'notice', 2000);
+                        $("#btn-t-"+pick_id).hide();
+                        $("#btn-p-"+pick_id).show();
+                    }else{
+                        window.flash_message(response.message, 'error', 2000);
+                    }
+                }
+            })
+        }
+    }
+
+    Drift.trash = function (bottle_id) {
+        if (pick_id) {
+            $.ajax({
+                url: '{{ url_for("bottle.trash") }}',
+                data: {bottle_id: bottle_id},
+                type: 'DELETE',
+                async: true,
+                dataType: 'json',
+                success: function (response) {
+                    if(response.success){
+                        window.flash_message(response.message, 'notice', 2000);
+                        $("#myB-"+bottle_id).slideUp();
+                        setTimeout(function(){$("#myB-"+bottle_id).remove()},3000);
+                    }else{
+                        window.flash_message(response.message, 'error', 2000);
+                    }
+                }
+            })
+        }
+    }
+
+    Drift.myBottles = function () {
+        $.ajax({
+            url: '{{ url_for("bottle.mine") }}',
+            type: 'GET',
+            async: true,
+            dataType: 'json',
+            success: function (response) {
+                var i = 0;
+                $('#myBottles-box').empty();
+                while (response[i].id) {
+                    if (response[i].visible == 0) {
+                        vis = "不在漂流";
+                    } else {
+                        vis = "还在漂流";
+                    }
+                    content = "<div class='myB' id='myB-"+response[i].id+"'><div class='myB-l'><img src='{{baseroot}}static/images/bottle/bottle.png' /><br /><a href='#' id='btn-t-"+response[i].id+"' onclick='$.thorwOut("+response[i].id+")'>#扔出去</a><a href='#' id='btn-p-"+response[i].id+"' onclick='$.pickBack("+response[i].id+")' >#捡回来</a><br /><a href='#' onclick='$.del("+response[i].id+")'>#不要了</a></div><div class='myB-r'><h5>投于"+response[i].sendTime+"("+vis+")：</h5><p>"+response[i].content+"</p></div></div>";
+                    $("#myBottles-box").append(content);
+                    if(response[i].visible == 0){
+                        $("#btn-p-"+response[i].id).hide();
+                    }else{
+                        $("#btn-t-"+response[i].id).hide();
+                    }
+                    i++;
+                }
+            }
+        })
+    }
 
 </script>
 <link href="{{ url_for('static', filename='styles/bottle/leadin.css') }}" rel="stylesheet" type="text/css" />
