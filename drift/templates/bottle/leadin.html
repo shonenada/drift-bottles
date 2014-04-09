@@ -2,9 +2,8 @@
 
 {%- block htmlhead %}
 <script>
-    var Drift = {
-
-    };
+(function(window, $) {
+    var Drift = {};
 
     Drift.init = function () {
         $('#myBottles-box').empty();
@@ -13,16 +12,16 @@
     Drift.pick_back = function (pick_id) {
         if (pick_id) {
             $.ajax({
-                url: '{{ url_for("bottle.pick") }}'
+                url: '{{ url_for("bottle.pick") }}',
                 data: {'bottle_id': pick_id},
-                type: 'GET',
+                type: 'PUT',
                 async: true,
                 dataType: 'json',
                 success: function (response) {
                     if (response.success){
                         window.flash_message(response.message, 'notice', 2000);
-                        $("#btn-t-"+pick_id).hide();
-                        $("#btn-p-"+pick_id).show();
+                        $("#btn-t-" + pick_id).show();
+                        $("#btn-p-" + pick_id).hide();
                     }else{
                         window.flash_message(response.message, 'error', 2000);
                     }
@@ -53,7 +52,7 @@
     }
 
     Drift.trash = function (bottle_id) {
-        if (pick_id) {
+        if (bottle_id) {
             $.ajax({
                 url: '{{ url_for("bottle.trash") }}',
                 data: {bottle_id: bottle_id},
@@ -80,26 +79,33 @@
             async: true,
             dataType: 'json',
             success: function (response) {
+                bottles = response['bottles'];
+                console.log(bottles);
                 var i = 0;
                 $('#myBottles-box').empty();
-                while (response[i].id) {
-                    if (response[i].visible == 0) {
-                        vis = "不在漂流";
+                while (bottles[i].id) {
+                    console.log(bottles[i].state)
+                    if (bottles[i].state == 'floating') {
+                        vis = "漂流中";
                     } else {
-                        vis = "还在漂流";
+                        vis = "不在漂流";
                     }
-                    content = "<div class='myB' id='myB-"+response[i].id+"'><div class='myB-l'><img src='{{baseroot}}static/images/bottle/bottle.png' /><br /><a href='#' id='btn-t-"+response[i].id+"' onclick='$.thorwOut("+response[i].id+")'>#扔出去</a><a href='#' id='btn-p-"+response[i].id+"' onclick='$.pickBack("+response[i].id+")' >#捡回来</a><br /><a href='#' onclick='$.del("+response[i].id+")'>#不要了</a></div><div class='myB-r'><h5>投于"+response[i].sendTime+"("+vis+")：</h5><p>"+response[i].content+"</p></div></div>";
+                    content = "<div class='myB' id='myB-"+bottles[i].id+"'><div class='myB-l'><img src='{{ url_for('static', filename='images/bottle/bottle.png') }}' /><br /><a href='#' id='btn-t-"+bottles[i].id+"' onclick='$D.throw("+bottles[i].id+")'>#扔出去</a><a href='#' id='btn-p-"+bottles[i].id+"' onclick='$D.pick_back("+bottles[i].id+")' >#捡回来</a><br /><a href='#' onclick='$D.trash("+bottles[i].id+")'>#不要了</a></div><div class='myB-r'><h5>投于"+bottles[i].created+"("+vis+")：</h5><p>"+bottles[i].content+"</p></div></div>";
                     $("#myBottles-box").append(content);
-                    if(response[i].visible == 0){
-                        $("#btn-p-"+response[i].id).hide();
+                    if(bottles[i].state == 'floating'){
+                        $("#btn-t-"+bottles[i].id).hide();
                     }else{
-                        $("#btn-t-"+response[i].id).hide();
+                        $("#btn-p-"+bottles[i].id).hide();
                     }
                     i++;
                 }
             }
         })
     }
+
+    window.Drift = window.$D = $D = Drift;
+
+})(window, jQuery);
 
 </script>
 <link href="{{ url_for('static', filename='styles/bottle/leadin.css') }}" rel="stylesheet" type="text/css" />

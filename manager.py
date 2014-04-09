@@ -9,7 +9,7 @@ from drift.app import db
 app_root = os.path.dirname(os.path.realpath(__name__))
 
 application = create_app('drift', os.path.join(app_root, 'development.conf'))
-server = Server()
+server = Server(port=5050)
 manager = Manager(application)
 manager.add_command('runserver', server)
 

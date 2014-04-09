@@ -3,7 +3,7 @@ from hashlib import sha256
 from datetime import datetime
 
 from flask.ext.sqlalchemy import BaseQuery
-from flask_rbac import RBACRoleMixinModel, RBACUserMixinModel
+from flask_rbac import RoleMixin, UserMixin
 
 from drift.app import db
 from drift.bottle.model import Bottle
@@ -31,7 +31,7 @@ class UserQuery(BaseQuery):
         return None
 
 
-class Role(db.Model, RBACRoleMixinModel):
+class Role(db.Model, RoleMixin):
 
     __tablename__ = 'role'
 
@@ -58,7 +58,7 @@ class Role(db.Model, RBACRoleMixinModel):
         return self.query.filter_by(name=name).first()
 
 
-class User(db.Model, RBACUserMixinModel):
+class User(db.Model, UserMixin):
 
     query_class = UserQuery
     USER_STATE = ('normal', 'unactivate', 'deleted')

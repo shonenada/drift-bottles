@@ -1,25 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//ZH" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>{% block title %}漂流瓶{% endblock %}</title>
-<script src="{{ url_for('static', filename='scripts/jQuery/jquery-1.7.2.min.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/jQuery/jquery.tools.min.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/jQuery/jquery.form.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/cookies_for_ajax.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/setting.js') }}"></script>
-<link href="{{ url_for('static', filename='components/reset-css/index.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ url_for('static', filename='styles/flash-messages.css') }}" rel="stylesheet" type="text/css" />
-{%- block scripts %}{%- endblock %}
-<!--[if !gt IE 8]>
-<script>
-$(function(){
-$S.alert('您的浏览器版本过低，不能获得良好的浏览效果，请升级或者使用Chrome、Firefox浏览器。');
-});
-</script>
-<![endif]-->
-{% block htmlhead %}
-{% endblock %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{% block title %}漂流瓶{% endblock %}</title>
+    <script src="{{ url_for('static', filename='scripts/jQuery/jquery-1.7.2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/jQuery/jquery.tools.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/jQuery/jquery.form.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/cookies_for_ajax.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/utils.js') }}"></script>
+    <link href="{{ url_for('static', filename='components/reset-css/index.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url_for('static', filename='styles/flash-messages.css') }}" rel="stylesheet" type="text/css" />
+    {%- block scripts %}{%- endblock %}
+    <!--[if !gt IE 8]>
+    <script>
+    $(function(){
+    $S.alert('您的浏览器版本过低，不能获得良好的浏览效果，请升级或者使用Chrome、Firefox浏览器。');
+    });
+    </script>
+    <![endif]-->
+    {% block htmlhead %}
+    {% endblock %}
 </head>
 <body>
 {%- include 'flash-message.html' %}

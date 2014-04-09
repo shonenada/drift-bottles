@@ -19,7 +19,7 @@ $(function(){
         }
     });
     
-//animate for the forms    
+//animate for the forms
     $('#bottle').hide();
     $('#myBottles').hide();
     $('#infor').html('您还可以写' + (365 - $("#paper").val().length) + '个字');
@@ -54,7 +54,7 @@ $(function(){
         $('#myBtn').delay(100).animate({opacity:'0'},200).slideUp(1);
         $('#bottles-bg').delay(400).animate({opacity:'0'}).slideUp();
         $('#myBottles').animate({opacity:'100'},1).delay(900).slideDown('slow');
-        $.myBottles();
+        $D.myBottles();
     });
     
     $('#paper').keyup(function(){
@@ -74,6 +74,4 @@ $(function(){
         }
     });
 
-    
-    
 });

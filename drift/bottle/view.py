@@ -22,7 +22,7 @@ def leadin():
 @login_required
 def river():
     page = int(request.args.get('page', 1))
-    bottles = Bottle.query.filter_by(state='normal').paginate(
+    bottles = Bottle.query.filter_by(state='floating').paginate(
         page = page,
         per_page = 20
     )
@@ -33,7 +33,7 @@ def river():
 @login_required
 def bottles():
     page = int(request.args.get('page', 1))
-    bottles = Bottle.query.filter_by(state='normal').paginate(
+    bottles = Bottle.query.filter_by(state='floating').paginate(
         page = page,
         per_page = 20
     ).items
@@ -54,7 +54,41 @@ def throw():
         return jsonify(success=False, messages=form.errors.values())
 
 
-@bottle_app.route('/pick', methods=['POST'])
+@bottle_app.route('/mine', methods=['GET'])
+@login_required
+def mine():
+    my_bottles = Bottle.query.filter_by(user=current_user).filter(Bottle.state!='deleted').all()
+    return jsonify(bottles=[bottle.serialization for bottle in my_bottles])
+
+
+@bottle_app.route('/pick', methods=['PUT'])
 @login_required
 def pick():
-    return None
+    bid = request.form.get('bottle_id')
+    bottle = Bottle.query.get(bid)
+    bottle.state = 'unfloat'
+    db.session.add(bottle)
+    db.session.commit()
+    return jsonify(success=True, message=u'操作成功')
+
+
+@bottle_app.route('/throw_out', methods=['PUT'])
+@login_required
+def throw_out():
+    bid = request.form.get('bottle_id')
+    bottle = Bottle.query.get(bid)
+    bottle.state = 'floating'
+    db.session.add(bottle)
+    db.session.commit()
+    return jsonify(success=True, message=u'操作成功')
+
+
+@bottle_app.route('/trash', methods=['DELETE'])
+@login_required
+def trash():
+    bid = request.form.get('bottle_id')
+    bottle = Bottle.query.get(bid)
+    bottle.state = 'deleted'
+    db.session.add(bottle)
+    db.session.commit()
+    return jsonify(success=True, message=u'操作成功')

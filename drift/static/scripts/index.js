@@ -56,7 +56,7 @@ $(function(){
 		$('#myBtn').delay(100).animate({opacity:'0'},200).slideUp(1);
 		$('#bottles-bg').delay(400).animate({opacity:'0'}).slideUp();
 		$('#myBottles').animate({opacity:'100'},1).delay(900).slideDown('slow');
-		$.myBottles();
+		Drift.myBottles();
 	});
 	
 	$('#paper').keyup(function(){

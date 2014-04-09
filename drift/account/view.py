@@ -1,6 +1,7 @@
 #-*- coding: utf-8
 from flask import Blueprint, render_template
 from flask import request, redirect, url_for, jsonify
+from flask.ext.login import login_required
 from flask.ext.login import login_user, logout_user, current_user
 
 from drift.app import db
@@ -59,7 +60,14 @@ def signup():
 
 
 @account_app.route('/signout')
+@login_required
 def signout():
     logout_user()
     flash(u'退出成功', 'notice')
     return redirect(url_for('master.index'))
+
+
+@account_app.route('/account')
+@login_required
+def account():
+    return 'test'
